@@ -1,0 +1,86 @@
+---
+title: "pca_toronto_R"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("readxl")
+install.packages("rgdal", repos="http://R-Forge.R-project.org")
+install.packages(c("FactoMineR", "factoextra"))
+library("readxl")
+library("FactoMineR")
+library("factoextra")
+```
+
+```{r}
+#Analysis of Toronto neighbourhoods
+```
+
+```{r}
+pcadata <- read_excel("toronto_data.xlsx")
+head(pcadata)
+```
+
+```{r}
+#Set an active dataframe with all the data 
+pcadata.active <- pcadata[1:141, 1:15]
+#Run the PCA using the active dataframe
+res.pca <- PCA(pcadata.active, graph = FALSE)
+#Display a summary of the PCA results
+summary(res.pca)
+```
+
+```{r}
+#Get the eigen values from the PCA results
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+```
+
+```{r}
+#Visualize the explained variance in the variables using fviz_eig()
+fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 30))
+```
+
+```{r}
+#Get the variance from the PCA
+var <- get_pca_var(res.pca)
+var
+```
+
+```{r}
+#Save the scree plot into a variable
+res.pca.scree <- fviz_eig(res.pca, addlabels = TRUE)
+#Save the scree plot into a png
+png("screeplot.png")
+#Plot the scree plot
+plot(res.pca.scree)
+dev.off()
+```
+
+```{r}
+# Contributions to the principal components
+var$contrib
+```
+
+```{r}
+# Coordinates of variables
+var$coord
+```
+
+```{r}
+#Create a variable correlation chart
+fviz_pca_var(res.pca, col.var = "black")
+```
+
+```{r}
+#save the variable chart into a variable
+pcadata <- fviz_pca_var(res.pca, col.var = "black")
+#Save variable chart as a png
+png("scatterplot.png")
+plot(pcadata)
+dev.off()
+```

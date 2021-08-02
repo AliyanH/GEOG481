@@ -1,0 +1,121 @@
+---
+title: "pca_US+CA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("readxl")
+install.packages("rgdal", repos="http://R-Forge.R-project.org")
+install.packages(c("FactoMineR", "factoextra"))
+library("readxl")
+library("FactoMineR")
+library("factoextra")
+```
+
+```{r}
+#PCA on Canadian cities: Toronto, Vancouver, Calgary; supplementary individuals are Iqaluit and Sudbury
+```
+
+```{r}
+pcadata_CA <- read_excel("10_areas_data_ind.xlsx", sheet = "CA")
+pcadata_CA
+```
+
+```{r}
+#Create an active dataframe using the data
+pcadata_CA.active <- pcadata_CA[1:3, 1:13]
+#Run a PCA and save it into a variable
+res.pca <- PCA(pcadata_CA, ind.sup = 4:5, graph = FALSE)
+#Print a summary of the PCA
+summary(res.pca)
+```
+
+```{r}
+#Get the eigen values of the data
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+```
+
+```{r}
+#Visualize the PCA eigen values in a scree plot
+fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 100))
+```
+
+```{r}
+#Get the variable PCA results
+var <- get_pca_var(res.pca)
+var
+```
+
+```{r}
+#Visualize the variable PCA results in a correlation chart
+fviz_pca_var(res.pca, col.var = "black", labelsize=6)
+options(repr.plot.width=20, repr.plot.height=20)
+```
+
+```{r}
+res.pca$ind.sup
+```
+
+```{r}
+#Get the PCA results for individual study areas and visualize them in a scatter plot
+p <- fviz_pca_ind(res.pca, col.ind.sup = "blue", repel = TRUE)
+options(repr.plot.width=7, repr.plot.height=7)
+p
+```
+
+```{r}
+#PCA on US cities and counties: NYC, LA, and Chicago; supplementary individuals are Navajo County and Cleburne County
+```
+
+```{r}
+pcadata_US <- read_excel("10_areas_data_ind.xlsx", sheet = "US")
+pcadata_US
+```
+
+```{r}
+#Set an active dataframe for the US data
+pcadata_US.active <- pcadata_US[1:3, 1:12]
+#Do the PCA on the active dataframe
+res.pca <- PCA(pcadata_US, ind.sup = 4:5, graph = FALSE)
+summary(res.pca)
+```
+
+```{r}
+#Get the eigenvalues of the PCA results
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+```
+
+```{r}
+#Visualize variance in the study areas
+fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 100))
+```
+
+```{r}
+#Get the PCA results for the variables
+var <- get_pca_var(res.pca)
+var
+```
+
+```{r}
+#Visualize the PCA results for the variables in a correlation chart
+fviz_pca_var(res.pca, col.var = "black", labelsize=6)
+options(repr.plot.width=25, repr.plot.height=25)
+```
+
+```{r}
+#Get the PCA results for the individuals
+res.pca$ind.sup
+```
+
+```{r}
+#Visualize the individual study areas on a scatter plot
+p <- fviz_pca_ind(res.pca, col.ind.sup = "blue", repel = TRUE)
+options(repr.plot.width=7, repr.plot.height=7)
+p
+```
